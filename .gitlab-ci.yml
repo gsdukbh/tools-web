@@ -37,10 +37,12 @@ unit-test-job:   # This job runs in the test stage.
     - sleep 60
 build_image-job:
   stage: build_image
+  before_script:
+    - sudo apt update && sudo apt upgrade && sudo apt install docker.io
   tags:
     - arm64
   script:
-    - docker build $docker_user/tools-web:0.0.1 .
+    - docker build "$docker_user/tools-web:0.0.1" .
 deploy-job:      # This job runs in the deploy stage.
   stage: deploy  # It only runs when *both* jobs in the test stage complete successfully.
   script:
