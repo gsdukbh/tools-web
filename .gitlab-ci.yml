@@ -16,10 +16,12 @@
 stages:          # List of stages for jobs, and their order of execution
   - build
   - test
+  - build_image
   - deploy
-
 build-job:       # This job runs in the build stage, which runs first.
   stage: build
+  tags:
+    - arm64
   image: gradle:7.4-jdk17
   script:
     - gradle build
@@ -28,10 +30,17 @@ build-job:       # This job runs in the build stage, which runs first.
 unit-test-job:   # This job runs in the test stage.
   stage: test    # It only starts when the job in the build stage completes successfully.
   image: gradle:7.4-jdk17
+  tags:
+    - arm64
   script:
     - gradle test
     - sleep 60
-
+build_image-job:
+  stage: build_image
+  tags:
+    - arm64
+  script:
+    - docker build $docker_user/tools-web:0.0.1 .
 deploy-job:      # This job runs in the deploy stage.
   stage: deploy  # It only runs when *both* jobs in the test stage complete successfully.
   script:
