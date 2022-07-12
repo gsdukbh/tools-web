@@ -13,9 +13,10 @@ logging:
   charset:
     file: UTF-8
 env:
-  appName: 'spring boot template'
+  appName: 'tools web'
   version: '0.0.1'
-  isEnableSwagger: true
+  isEnableSwagger: false
+  isPublic: true
   jwt:
     expire: 30
     tokenHeader: Authorization
