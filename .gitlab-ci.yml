@@ -26,7 +26,9 @@ build-job:       # This job runs in the build stage, which runs first.
   script:
     - gradle build
     - echo "Compile complete."
-
+  artifacts:
+    paths:
+      - build
 unit-test-job:   # This job runs in the test stage.
   stage: test    # It only starts when the job in the build stage completes successfully.
   image: gradle:7.4-jdk17
@@ -34,11 +36,11 @@ unit-test-job:   # This job runs in the test stage.
     - arm64
   script:
     - gradle test
-    - sleep 60
 build_image-job:
+  needs:
+    - build
   stage: build_image
-  before_script:
-    - sudo apt update && sudo apt upgrade && sudo apt install docker.io
+  image: docker:20.10.17
   tags:
     - arm64
   script:
