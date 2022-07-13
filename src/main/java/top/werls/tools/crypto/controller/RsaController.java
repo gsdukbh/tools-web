@@ -5,17 +5,17 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
+import top.werls.tools.common.utils.captcha.CodeGenerator;
+import top.werls.tools.common.utils.captcha.RandomGeneratorCode;
 import top.werls.tools.common.utils.crypto.asymmetric.RSA;
 
+import java.nio.charset.StandardCharsets;
 import java.security.*;
 import java.security.interfaces.RSAPrivateKey;
 import java.security.interfaces.RSAPublicKey;
 import java.security.spec.PKCS8EncodedKeySpec;
 import java.security.spec.X509EncodedKeySpec;
-import java.util.ArrayList;
-import java.util.Base64;
-import java.util.Map;
-import java.util.Random;
+import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 
 /**
@@ -29,7 +29,8 @@ import java.util.concurrent.ConcurrentHashMap;
 public class RsaController {
 
 
-    public static String[] ss = new String[]{"top", "werls"};
+    public static int length = 7;
+
     @GetMapping("/getkeys")
     @ResponseBody
     public Map<String, String> getKeys(Integer length) throws Exception {
@@ -62,21 +63,10 @@ public class RsaController {
         RSAPrivateKey key = (RSAPrivateKey) keyFactory.generatePrivate(keySpec1);
 
         data = data.strip();
-
-        Random r = new Random();
-        var initialize = r.nextInt(1, data.length());
-        var l = data.length() / initialize;
-        var lister = new ArrayList<String>();
-        for (int i = 0; i < data.length(); ) {
-            lister.add(data.substring(i, (i + l) >= data.length() ? (data.length() - 1) : i + l));
-            lister.add(ss[r.nextInt(0, 2)]);
-            i += l;
-        }
-        StringBuilder builder = new StringBuilder();
-        for (var s : lister) {
-            builder.append(s);
-        }
-        var res = RSA.encryptToBase64(builder.toString(), key);
+        CodeGenerator codeCount = new RandomGeneratorCode(4);
+        data = codeCount.generate() + data + codeCount.generate();
+        data = Base64.getEncoder().encodeToString(data.getBytes(StandardCharsets.UTF_8));
+        var res = RSA.encryptToBase64(data, key);
         return res;
     }
 
@@ -92,7 +82,10 @@ public class RsaController {
         RSAPublicKey key = (RSAPublicKey) keyFactory.generatePublic(keySpec);
         data = data.strip();
         var by = RSA.decryptByBase64(data, key);
-        var decryptSt = new String(by).replace(ss[0], "").replace(ss[1], "");
+        var decryptSt = new String(by);
+        decryptSt = new String(Base64.getDecoder().decode(decryptSt));
+        decryptSt = decryptSt.substring(4, decryptSt.length() - 4);
+
         return decryptSt;
 
     }

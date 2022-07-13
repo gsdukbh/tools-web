@@ -18,36 +18,33 @@ stages:          # List of stages for jobs, and their order of execution
   - test
   - build_image
   - deploy
-#build-job:       # This job runs in the build stage, which runs first.
-#  stage: build
-#  tags:
-#    - arm64
-#  image: gradle:7.4-jdk17
-#  script:
-#    - gradle build
-#    - echo "Compile complete."
-#  artifacts:
-#    paths:
-#      - build
-#unit-test-job:   # This job runs in the test stage.
-#  stage: test    # It only starts when the job in the build stage completes successfully.
-#  image: gradle:7.4-jdk17
-#  needs: []
-#  tags:
-#    - arm64
-#  script:
-#    - gradle test
-#build_image-job:
-#  stage: build_image
-#  image: docker:20.10.17
-#  tags:
-#    - arm64
-#  script:
-#    - docker build "$docker_user/tools-web:0.0.1" .
+build-job:       # This job runs in the build stage, which runs first.
+  stage: build
+  tags:
+    - arm64
+  image: gradle:7.4-jdk17
+  script:
+    - gradle build
+    - echo "Compile complete."
+  artifacts:
+    paths:
+      - build
+unit-test-job:   # This job runs in the test stage.
+  stage: test    # It only starts when the job in the build stage completes successfully.
+  image: gradle:7.4-jdk17
+  needs: []
+  script:
+    - gradle test
+build_image-job:
+  stage: build_image
+  image: docker:20.10.17
+  tags:
+    - arm64
+  script:
+    - docker build -t "$docker_user/tools-web:0.0.1" .
+    - docker rmi "$docker_user/tools-web:0.0.1"
 deploy-job:      # This job runs in the deploy stage.
   stage: deploy  # It only runs when *both* jobs in the test stage complete successfully.
   script:
-    - export
-    - echo "$docker_user"
     - echo "Deploying application..."
     - echo "Application successfully deployed."
