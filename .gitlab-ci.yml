@@ -31,7 +31,7 @@ stages:          # List of stages for jobs, and their order of execution
 
 build_image-job:
   stage: build_image
-  image: docker:20.10.17
+  image: docker:stable
   tags:
     - arm64
   script:
