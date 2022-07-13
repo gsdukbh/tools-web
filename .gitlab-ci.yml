@@ -32,6 +32,8 @@ stages:          # List of stages for jobs, and their order of execution
 build_image-job:
   stage: build_image
   image: docker:stable
+  services:
+    - docker:dind
   tags:
     - arm64
   script:
