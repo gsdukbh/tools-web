@@ -13,25 +13,28 @@
 #
 # For more information, see: https://docs.gitlab.com/ee/ci/yaml/index.html#stages
 
-stages:          # List of stages for jobs, and their order of execution
+stages: # List of stages for jobs, and their order of execution
   - build
   - build_image
   - deploy
-#build-job:       # This job runs in the build stage, which runs first.
-#  stage: build
-#  tags:
-#    - arm64
-#  image: gradle:7.4-jdk17
-#  script:
-#    - gradle build
-#    - echo "Compile complete."
-#  artifacts:
-#    paths:
-#      - build
+build-job: # This job runs in the build stage, which runs first.
+  stage: build
+  tags:
+    - arm64
+  image: gradle:7.4-jdk17
+  script:
+    - gradle build
+    - echo "Compile complete."
+  artifacts:
+    paths:
+      - build
 
 build_image-job:
   stage: build_image
   image: docker:20.10.17
+  needs:
+    - job: build-job
+      artifacts: true
   services:
     - docker:20.10.17-dind
   tags:
@@ -40,7 +43,7 @@ build_image-job:
     - docker info
     - docker build -t "$docker_user/tools-web:0.0.1" .
     - docker rmi "$docker_user/tools-web:0.0.1"
-deploy-job:      # This job runs in the deploy stage.
+deploy-job: # This job runs in the deploy stage.
   stage: deploy  # It only runs when *both* jobs in the test stage complete successfully.
   script:
     - echo "Deploying application..."
