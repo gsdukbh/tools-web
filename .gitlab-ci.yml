@@ -17,18 +17,18 @@ stages: # List of stages for jobs, and their order of execution
   - build
   - build_image
   - deploy
-build-job: # This job runs in the build stage, which runs first.
-  stage: build
-  tags:
-    - arm64
-  image: gradle:7.4-jdk17
-  script:
-    - gradle build
-    - echo "Compile complete."
-  artifacts:
-    expire_in: 3 days
-    paths:
-      - build
+#build-job: # This job runs in the build stage, which runs first.
+#  stage: build
+#  tags:
+#    - arm64
+#  image: gradle:7.4-jdk17
+#  script:
+#    - gradle build
+#    - echo "Compile complete."
+#  artifacts:
+#    expire_in: 3 days
+#    paths:
+#      - build
 
 build_image-job:
   stage: build_image
@@ -44,10 +44,11 @@ build_image-job:
   variables:
     IMAGE_TAG: $CI_REGISTRY_IMAGE:$CI_COMMIT_REF_SLUG
   script:
-    - docker login -u $CI_REGISTRY_USER -p $CI_REGISTRY_PASSWORD $CI_REGISTRY
-    - docker build -t $IMAGE_TAG .
-    - docker push $IMAGE_TAG
-    - docker rmi $IMAGE_TAG
+    - echo "$CI_REGISTRY_USER  $CI_REGISTRY_PASSWORD  $CI_REGISTRY "
+#    - docker login -u $CI_REGISTRY_USER -p $CI_REGISTRY_PASSWORD $CI_REGISTRY
+#    - docker build -t $IMAGE_TAG .
+#    - docker push $IMAGE_TAG
+#    - docker rmi $IMAGE_TAG
 deploy-job: # This job runs in the deploy stage.
   stage: deploy  # It only runs when *both* jobs in the test stage complete successfully.
   script:
