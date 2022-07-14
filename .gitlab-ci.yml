@@ -48,7 +48,7 @@ build_image-job:
   variables:
     IMAGE_TAG: $CI_REGISTRY_IMAGE:$CI_COMMIT_REF_SLUG
   script:
-    - echo "$CI_REGISTRY_USER  $CI_REGISTRY_PASSWORD  $CI_REGISTRY "
+    - echo "$CI_REGISTRY_USER  $CI_JOB_TOKEN   $CI_REGISTRY "
 deploy-job: # This job runs in the deploy stage.
   stage: deploy  # It only runs when *both* jobs in the test stage complete successfully.
   script:
