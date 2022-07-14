@@ -37,10 +37,9 @@ stages: # List of stages for jobs, and their order of execution
 build_image-job:
   stage: build_image
   image: docker:20.10.17
-
-  needs:
-    - job: build-job
-      artifacts: true
+  # needs:
+  #   - job: build-job
+  #     artifacts: true
   services:
     - docker:20.10.17-dind
   tags:
