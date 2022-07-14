@@ -33,6 +33,7 @@ build-job: # This job runs in the build stage, which runs first.
 build_image-job:
   stage: build_image
   image: docker:20.10.17
+
   needs:
     - job: build-job
       artifacts: true
@@ -40,10 +41,13 @@ build_image-job:
     - docker:20.10.17-dind
   tags:
     - arm64
+  variables:
+    IMAGE_TAG: $CI_REGISTRY_IMAGE:$CI_COMMIT_REF_SLUG
   script:
-    - docker info
-    - docker build -t "$docker_user/tools-web:0.0.1" .
-    - docker rmi "$docker_user/tools-web:0.0.1"
+    - docker login -u $CI_REGISTRY_USER -p $CI_REGISTRY_PASSWORD $CI_REGISTRY
+    - docker build -t $IMAGE_TAG .
+    - docker push $IMAGE_TAG
+    - docker rmi $IMAGE_TAG
 deploy-job: # This job runs in the deploy stage.
   stage: deploy  # It only runs when *both* jobs in the test stage complete successfully.
   script:

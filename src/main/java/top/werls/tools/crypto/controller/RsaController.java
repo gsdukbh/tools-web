@@ -28,9 +28,6 @@ import java.util.concurrent.ConcurrentHashMap;
 @RequestMapping("/public/rsa")
 public class RsaController {
 
-
-    public static int length = 7;
-
     @GetMapping("/getkeys")
     @ResponseBody
     public Map<String, String> getKeys(Integer length) throws Exception {
@@ -63,9 +60,6 @@ public class RsaController {
         RSAPrivateKey key = (RSAPrivateKey) keyFactory.generatePrivate(keySpec1);
 
         data = data.strip();
-        CodeGenerator codeCount = new RandomGeneratorCode(4);
-        data = codeCount.generate() + data + codeCount.generate();
-        data = Base64.getEncoder().encodeToString(data.getBytes(StandardCharsets.UTF_8));
         var res = RSA.encryptToBase64(data, key);
         return res;
     }
@@ -83,8 +77,6 @@ public class RsaController {
         data = data.strip();
         var by = RSA.decryptByBase64(data, key);
         var decryptSt = new String(by);
-        decryptSt = new String(Base64.getDecoder().decode(decryptSt));
-        decryptSt = decryptSt.substring(4, decryptSt.length() - 4);
 
         return decryptSt;
 
