@@ -47,7 +47,7 @@ build_image-job:
   tags:
     - arm64
   variables:
-    IMAGE_TAG: $DOCKER_NAME/$CI_PROJECT_NAME:$CI_COMMIT_TAG
+    IMAGE_TAG: gsdukbh/$CI_PROJECT_NAME:$CI_COMMIT_TAG
     LATEST: $DOCKER_NAME/$CI_PROJECT_NAME:latest
   script:
     - echo "$DOCKER_NAME"
