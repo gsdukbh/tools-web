@@ -39,8 +39,8 @@ build_image-job:
   image: docker:latest
   services:
     - docker:dind
-#  only:
-#    - tags
+  only:
+    - tags
   needs:
      - job: build-job
        artifacts: true
@@ -50,7 +50,6 @@ build_image-job:
     IMAGE_TAG: $DOCKER_NAME/$CI_PROJECT_NAME:$CI_COMMIT_TAG
     LATEST: $DOCKER_NAME/$CI_PROJECT_NAME:latest
   script:
-    - echo "$DOCKER_NAME"
     - docker run --privileged --rm tonistiigi/binfmt --install all
     - docker buildx  build --platform linux/arm64 -t $IMAGE_TAG -f Dockerfile ./
     - docker tag $IMAGE_TAG $LATEST
