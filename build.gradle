@@ -5,7 +5,7 @@ plugins {
 }
 
 group = 'top.werls'
-version = '0.0.5-releases'
+version = '0.0.6-releases'
 sourceCompatibility = '17'
 
 configurations {
