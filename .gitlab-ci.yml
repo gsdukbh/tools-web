@@ -36,9 +36,9 @@ build-job: # This job runs in the build stage, which runs first.
 
 build_image-job:
   stage: build_image
-  image: docker:20.10.17
+  image: docker:latest
   services:
-    - docker:20.10.17-dind
+    - docker:dind
   only:
     - tags
   needs:
