@@ -54,12 +54,24 @@ build_image-job:
     - docker buildx  build --platform linux/arm64 -t $IMAGE_TAG -f Dockerfile ./
     - docker tag $IMAGE_TAG $LATEST
     - docker login -u $DOCKER_NAME -p $DOCKER_PASSWORD
-    - docker push -a $LATEST
+    - docker push  $LATEST
+    - docker rmi $IMAGE_TAG
 
 
 deploy-job: # This job runs in the deploy stage.
   stage: deploy  # It only runs when *both* jobs in the test stage complete successfully.
+  variables:
+    IMAGE_TAG: $DOCKER_NAME/$CI_PROJECT_NAME:$CI_COMMIT_TAG
+  before_script:
+    - 'command -v ssh-agent >/dev/null || ( apt-get update -y && apt-get install openssh-client -y )'
+    - eval $(ssh-agent -s)
+    - echo "$SSH_PRIVATE_KEY" | tr -d '\r' | ssh-add -
+    - mkdir -p ~/.ssh
+    - chmod 700 ~/.ssh
+    - echo "$SSH_KNOWN_HOSTS" >> ~/.ssh/known_hosts
+    - chmod 644 ~/.ssh/known_hosts
   script:
-    - echo "$DOCKER_NAME"
+    - ssh $DEPLOY_HOST_NAME@DEPLOY_HOST
+    - pwd
     - echo "Deploying application..."
     - echo "Application successfully deployed."
