@@ -1,0 +1,7 @@
+version: '3.9'
+services:
+  tools:
+    image: root
+    container_name: tools
+    ports:
+      - '8080:8080'
