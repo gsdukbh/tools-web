@@ -34,28 +34,28 @@ stages: # List of stages for jobs, and their order of execution
 #    paths:
 #      - build
 
-build_image-job:
-  stage: build_image
-  image: docker:latest
-  services:
-    - docker:dind
-  only:
-    - tags
-  needs:
-     - job: build-job
-       artifacts: true
-  tags:
-    - arm64
-  variables:
-    IMAGE_TAG: $DOCKER_NAME/$CI_PROJECT_NAME:$CI_COMMIT_TAG
-    LATEST: $DOCKER_NAME/$CI_PROJECT_NAME:latest
-  script:
-    - docker run --privileged --rm tonistiigi/binfmt --install all
-    - docker buildx  build --platform linux/arm64 -t $IMAGE_TAG -f Dockerfile ./
-    - docker tag $IMAGE_TAG $LATEST
-    - docker login -u $DOCKER_NAME -p $DOCKER_PASSWORD
-    - docker push  $LATEST
-    - docker rmi $IMAGE_TAG
+#build_image-job:
+#  stage: build_image
+#  image: docker:latest
+#  services:
+#    - docker:dind
+#  only:
+#    - tags
+#  needs:
+#     - job: build-job
+#       artifacts: true
+#  tags:
+#    - arm64
+#  variables:
+#    IMAGE_TAG: $DOCKER_NAME/$CI_PROJECT_NAME:$CI_COMMIT_TAG
+#    LATEST: $DOCKER_NAME/$CI_PROJECT_NAME:latest
+#  script:
+#    - docker run --privileged --rm tonistiigi/binfmt --install all
+#    - docker buildx  build --platform linux/arm64 -t $IMAGE_TAG -f Dockerfile ./
+#    - docker tag $IMAGE_TAG $LATEST
+#    - docker login -u $DOCKER_NAME -p $DOCKER_PASSWORD
+#    - docker push  $LATEST
+#    - docker rmi $IMAGE_TAG
 
 
 deploy-job: # This job runs in the deploy stage.
