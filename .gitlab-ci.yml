@@ -56,6 +56,7 @@ build_image-job:
     - docker login -u $DOCKER_NAME -p $DOCKER_PASSWORD
     - docker push  $LATEST
     - docker rmi $IMAGE_TAG
+    - docker rmi $LATEST
 
 
 deploy-job: # This job runs in the deploy stage.
