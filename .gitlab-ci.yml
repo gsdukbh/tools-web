@@ -91,7 +91,7 @@ deploy-job: # This job runs in the deploy stage.
   - ssh -T $DEPLOY_HOST_NAME@$DEPLOY_HOST < ./deploy/bash.sh
   - echo "Deploying application..."
   - echo "Application successfully deployed."
-sast:
-  stage: test
-include:
-- template: Auto-DevOps.gitlab-ci.yml
+#sast:
+#  stage: test
+#include:
+#- template: Auto-DevOps.gitlab-ci.yml
