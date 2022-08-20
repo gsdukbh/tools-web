@@ -41,7 +41,7 @@ build-job: # This job runs in the build stage, which runs first.
     - gradle bootJar
     - echo "Compile complete."
   artifacts:
-    expire_in: 3 days
+    expire_in: 1 days
     paths:
       - build
 
