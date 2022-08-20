@@ -73,7 +73,7 @@ deploy-job: # This job runs in the deploy stage.
 #  needs:
 #  - job: build_image-job
   variables:
-    IMAGE_TAG: "$DOCKER_NAME/$CI_PROJECT_NAME:$CI_COMMIT_TAG"
+    IMAGE_TAG: "$DOCKER_NAME\/$CI_PROJECT_NAME:$CI_COMMIT_TAG"
   before_script:
     - command -v ssh-agent >/dev/null || ( apt-get update -y && apt-get install openssh-client
       -y )
@@ -85,7 +85,7 @@ deploy-job: # This job runs in the deploy stage.
     - chmod 644 ~/.ssh/known_hosts
     - apt-get install rsync -y
   script:
-    - sed -i 's/IMAGE_TAG/'"$IMAGE_TAG"'/g' ./deploy/docker-compose.yml
+    - sed -i "s/IMAGE_TAG/"$IMAGE_TAG"/g" ./deploy/docker-compose.yml
     - rsync -avz -e ssh --include docker-compose.yml ./deploy $DEPLOY_HOST_NAME@$DEPLOY_HOST:/tools
     - ssh -T $DEPLOY_HOST_NAME@$DEPLOY_HOST < ./deploy/bash.sh
     - echo "Application successfully deployed."
