@@ -4,4 +4,4 @@ services:
     image: gsdukbh/tools-web:latest
     container_name: tools
     ports:
-      - '8080:8080'
+      - '9080:8080'
