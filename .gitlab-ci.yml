@@ -89,7 +89,6 @@ deploy-job: # This job runs in the deploy stage.
   script:
   - rsync -avz -e ssh --include docker-compose.yml ./deploy $DEPLOY_HOST_NAME@$DEPLOY_HOST:/tools
   - ssh -T $DEPLOY_HOST_NAME@$DEPLOY_HOST < ./deploy/bash.sh
-  - echo "Deploying application..."
   - echo "Application successfully deployed."
 #sast:
 #  stage: test
