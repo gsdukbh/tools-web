@@ -64,8 +64,6 @@ deploy-job: # This job runs in the deploy stage.
 #    - tags
 #  needs:
 #    - job: build_image-job
-  variables:
-    IMAGE_TAG: $DOCKER_NAME/$CI_PROJECT_NAME:$CI_COMMIT_TAG
   before_script:
     - 'command -v ssh-agent >/dev/null || ( apt-get update -y && apt-get install openssh-client -y )'
     - eval $(ssh-agent -s)
@@ -75,8 +73,6 @@ deploy-job: # This job runs in the deploy stage.
     - echo "$SSH_KNOWN_HOSTS" >> ~/.ssh/known_hosts
     - chmod 644 ~/.ssh/known_hosts
   script:
-    - echo "$IMAGE_TAG"
-    - sed -i "s/IMAGE_TAG/$IMAGE_TAG/" docker-compose.yml
     - rsync -avz -e ssh --include docker-compose.yml / $DEPLOY_HOST_NAME@$DEPLOY_HOST:/tools
     - ssh -T $DEPLOY_HOST_NAME@$DEPLOY_HOST < bash.sh
     - echo "Deploying application..."

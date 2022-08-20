@@ -1,7 +1,7 @@
 version: '3.9'
 services:
   tools:
-    image: IMAGE_TAG
+    image: gsdukbh/tools-web:latest
     container_name: tools
     ports:
       - '8080:8080'
