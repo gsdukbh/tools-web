@@ -68,10 +68,10 @@ build_image-job:
 
 deploy-job: # This job runs in the deploy stage.
   stage: deploy  # It only runs when *both* jobs in the test stage complete successfully.
-#  only:
-#  - tags
-#  needs:
-#  - job: build_image-job
+  only:
+  - tags
+  needs:
+  - job: build_image-job
   variables:
     IMAGE_TAG: $DOCKER_NAME\/$CI_PROJECT_NAME:$CI_COMMIT_TAG
   before_script:
