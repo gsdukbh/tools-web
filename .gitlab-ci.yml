@@ -21,18 +21,18 @@ stages: # List of stages for jobs, and their order of execution
   - build
   - build_image
   - deploy
-build-job: # This job runs in the build stage, which runs first.
-  stage: build
-  tags:
-    - arm64
-  image: gradle:7.4-jdk17
-  script:
-    - gradle build
-    - echo "Compile complete."
-  artifacts:
-    expire_in: 3 days
-    paths:
-      - build
+#build-job: # This job runs in the build stage, which runs first.
+#  stage: build
+#  tags:
+#    - arm64
+#  image: gradle:7.4-jdk17
+#  script:
+#    - gradle build
+#    - echo "Compile complete."
+#  artifacts:
+#    expire_in: 3 days
+#    paths:
+#      - build
 
 build_image-job:
   stage: build_image
@@ -75,7 +75,7 @@ deploy-job: # This job runs in the deploy stage.
     - echo "$SSH_KNOWN_HOSTS" >> ~/.ssh/known_hosts
     - chmod 644 ~/.ssh/known_hosts
   script:
-    - sed -i "s/IMAGE_TAG/$IMAGE_TAG/" docker-compose.yml
+    - /bin/sed -i "s/IMAGE_TAG/$IMAGE_TAG/" docker-compose.yml
     - rsync -avz -e ssh --include docker-compose.yml / $DEPLOY_HOST_NAME@$DEPLOY_HOST:/tools
     - ssh -T $DEPLOY_HOST_NAME@$DEPLOY_HOST < bash.sh
     - echo "Deploying application..."
