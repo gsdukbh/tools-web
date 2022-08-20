@@ -6,21 +6,21 @@
 # Note that environment variables can be set in several places
 # See https://docs.gitlab.com/ee/ci/variables/#cicd-variable-precedence
 stages:
-- test
-- build
-- build_image
-- deploy
-- review
-- dast
-- staging
-- canary
-- production
-- incremental rollout 10%
-- incremental rollout 25%
-- incremental rollout 50%
-- incremental rollout 100%
-- performance
-- cleanup
+  - test
+  - build
+  - build_image
+  - deploy
+  - review
+  - dast
+  - staging
+  - canary
+  - production
+  - incremental rollout 10%
+  - incremental rollout 25%
+  - incremental rollout 50%
+  - incremental rollout 100%
+  - performance
+  - cleanup
 test-job:
   stage: test
   tags:
@@ -73,7 +73,7 @@ deploy-job: # This job runs in the deploy stage.
 #  needs:
 #  - job: build_image-job
   variables:
-    IMAGE_TAG: "$DOCKER_NAME\/$CI_PROJECT_NAME:$CI_COMMIT_TAG"
+    IMAGE_TAG: $DOCKER_NAME\/$CI_PROJECT_NAME:$CI_COMMIT_TAG
   before_script:
     - command -v ssh-agent >/dev/null || ( apt-get update -y && apt-get install openssh-client
       -y )
