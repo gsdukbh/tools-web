@@ -64,7 +64,7 @@ build_image-job:
     - docker buildx ls
     - docker run --privileged --rm tonistiigi/binfmt --install all
     - docker buildx create --use --name mybuilder
-    - docker buildx  build --platform  linux/amd64,linux/arm64 -t $IMAGE_TAG -f Dockerfile ./
+    - docker buildx  build --platform --load linux/amd64,linux/arm64 -t $IMAGE_TAG -f Dockerfile ./
     - docker tag $IMAGE_TAG $LATEST
     - docker login -u $DOCKER_NAME -p $DOCKER_PASSWORD
     - docker push  $LATEST
