@@ -74,7 +74,7 @@ deploy-job: # This job runs in the deploy stage.
     - chmod 644 ~/.ssh/known_hosts
     - apt-get install rsync -y
   script:
-    - rsync -avz -e ssh --include docker-compose.yml / $DEPLOY_HOST_NAME@$DEPLOY_HOST:/tools
+    - rsync -avz -e ssh --include docker-compose.yml ./ $DEPLOY_HOST_NAME@$DEPLOY_HOST:/tools
     - ssh -T $DEPLOY_HOST_NAME@$DEPLOY_HOST < bash.sh
     - echo "Deploying application..."
     - echo "Application successfully deployed."
