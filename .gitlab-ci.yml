@@ -71,6 +71,6 @@ deploy-job: # This job runs in the deploy stage.
     - echo "$SSH_KNOWN_HOSTS" >> ~/.ssh/known_hosts
     - chmod 644 ~/.ssh/known_hosts
   script:
-    - ssh -T $DEPLOY_HOST_NAME@$DEPLOY_HOST bash bash.sh
+    - ssh -T $DEPLOY_HOST_NAME@$DEPLOY_HOST < bash.sh
     - echo "Deploying application..."
     - echo "Application successfully deployed."
