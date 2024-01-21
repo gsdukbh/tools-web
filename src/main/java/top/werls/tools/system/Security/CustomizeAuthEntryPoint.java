@@ -2,14 +2,14 @@ package top.werls.tools.system.Security;
 
 
 import com.google.gson.Gson;
+import jakarta.servlet.ServletException;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.web.AuthenticationEntryPoint;
 import org.springframework.stereotype.Component;
 import top.werls.tools.common.ResultData;
 
-import javax.servlet.ServletException;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 
 /**
@@ -33,7 +33,8 @@ public class CustomizeAuthEntryPoint implements AuthenticationEntryPoint {
      * @param authException that caused the invocation
      */
     @Override
-    public void commence(HttpServletRequest request, HttpServletResponse response, AuthenticationException authException) throws IOException, ServletException {
+    public void commence(HttpServletRequest request, HttpServletResponse response, AuthenticationException authException) throws IOException,
+        ServletException {
 
         Gson gson = new Gson();
         response.setCharacterEncoding("UTF-8");

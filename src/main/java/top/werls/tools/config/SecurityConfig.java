@@ -1,24 +1,29 @@
 package top.werls.tools.config;
 
+import static org.springframework.security.config.Customizer.withDefaults;
+
+import jakarta.annotation.Resource;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
+import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
-import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import top.werls.tools.system.Security.CustomizeAccessDeniedHandler;
 import top.werls.tools.system.Security.CustomizeAuthEntryPoint;
 import top.werls.tools.system.Security.JwtAuthenticationTokenFilter;
 import top.werls.tools.system.service.impl.UserDetailsServiceImpl;
+import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
 
-import javax.annotation.Resource;
 
 @Configuration
-public class SecurityConfig extends WebSecurityConfigurerAdapter {
+public class SecurityConfig  {
 
 
     @Resource
@@ -31,47 +36,48 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
     @Resource
     public UserDetailsServiceImpl userDetailsService;
+
     @Value("${env.isEnableSwagger}")
-    private  boolean isEnableSwagger;
-    @Value("${env.isPublic}")
-    private  boolean isPublic;
+    private boolean isEnableSwagger;
 
     @Bean
     public PasswordEncoder passwordEncoder() {
         return new BCryptPasswordEncoder();
     }
 
-    @Override
     protected void configure(AuthenticationManagerBuilder auth) throws Exception {
-        super.configure(auth);
         auth.userDetailsService(userDetailsService).passwordEncoder(passwordEncoder());
     }
 
-    @Override
-    protected void configure(HttpSecurity http) throws Exception {
-        if (isEnableSwagger){
-            http.authorizeRequests().antMatchers("/swagger-ui.html",
-                    "/webjars/**",
-                    "/swagger-ui*/**",
-                    "/v3/**").permitAll();
+    @Bean
+    public AuthenticationManager CustomAuthenticationManager(AuthenticationConfiguration auth)
+        throws Exception {
+        return auth.getAuthenticationManager();
+    }
+
+    @Bean
+    public SecurityFilterChain web(HttpSecurity http) throws Exception {
+        if (isEnableSwagger) {
+            http.authorizeHttpRequests((requests) ->
+                requests.requestMatchers("/swagger-ui.html", "/webjars/**", "/swagger-ui*/**", "/v3/**")
+                    .permitAll());
         }
-        if (isPublic){
-            http.authorizeRequests().antMatchers("/public/**","/").permitAll();
-        }
-        http.
-                cors()
-                .and()
-                .csrf().disable()
-                .authorizeRequests()
-                .antMatchers("/login").permitAll()
-                .anyRequest().authenticated()
-                .and()
-                .exceptionHandling()
+        http.authorizeHttpRequests((requests) ->{
+            requests.requestMatchers("/public/**","/").permitAll();
+        });
+        http.cors(withDefaults())
+            .csrf(AbstractHttpConfigurer::disable)
+            .authorizeHttpRequests(
+                (requests) -> requests.requestMatchers("/login").permitAll().anyRequest()
+                    .authenticated())
+            .exceptionHandling((authorizeRequests) -> authorizeRequests
                 .accessDeniedHandler(accessDeniedHandler)
                 .authenticationEntryPoint(authEntryPoint)
-                .and()
-                .addFilterBefore(jwtAuthenticationTokenFilter, UsernamePasswordAuthenticationFilter.class)
-                .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS)
-        ;
+            )
+            .addFilterBefore(jwtAuthenticationTokenFilter, UsernamePasswordAuthenticationFilter.class)
+            .sessionManagement((sessionManagement) -> sessionManagement
+                .sessionCreationPolicy(SessionCreationPolicy.ALWAYS));
+
+        return http.build();
     }
 }

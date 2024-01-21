@@ -1,11 +1,12 @@
 package top.werls.tools.system.exception;
 
+import jakarta.servlet.http.HttpServletResponse;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 import top.werls.tools.common.ResultData;
 
-import javax.servlet.http.HttpServletResponse;
+
 
 /**
  * 全局异常处理

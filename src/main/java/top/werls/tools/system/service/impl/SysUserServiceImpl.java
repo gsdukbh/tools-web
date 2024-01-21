@@ -1,5 +1,6 @@
 package top.werls.tools.system.service.impl;
 
+import jakarta.annotation.Resource;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -12,7 +13,7 @@ import top.werls.tools.system.param.LoginParam;
 import top.werls.tools.system.service.SysUserService;
 import top.werls.tools.system.vo.LoginVo;
 
-import javax.annotation.Resource;
+
 
 @Service
 @Slf4j

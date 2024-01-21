@@ -1,6 +1,7 @@
 package top.werls.tools.system.controller;
 
 
+import jakarta.annotation.Resource;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -10,7 +11,7 @@ import top.werls.tools.system.param.LoginParam;
 import top.werls.tools.system.service.SysUserService;
 import top.werls.tools.system.vo.LoginVo;
 
-import javax.annotation.Resource;
+
 
 
 @Slf4j

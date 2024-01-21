@@ -51,7 +51,7 @@ public class RsaController {
     @PostMapping("/encrypt")
     @ResponseBody
     public String encrypt(String privateKey, String data) throws Exception {
-        if (data == null || data.length() == 0 || privateKey == null || privateKey.length() == 0) {
+        if (data == null || data.isEmpty() || privateKey == null || privateKey.isEmpty()) {
             return "";
         }
         byte[] keyBytes = Base64.getDecoder().decode(privateKey.strip());
@@ -67,7 +67,7 @@ public class RsaController {
     @PostMapping("/decrypt")
     @ResponseBody
     public String decrypt(String publicKey, String data) throws Exception {
-        if (data == null || data.length() == 0 || publicKey == null || publicKey.length() == 0) {
+        if (data == null || data.isEmpty() || publicKey == null || publicKey.isEmpty()) {
             return "";
         }
         byte[] keyBytes = Base64.getDecoder().decode(publicKey.strip());
@@ -76,9 +76,8 @@ public class RsaController {
         RSAPublicKey key = (RSAPublicKey) keyFactory.generatePublic(keySpec);
         data = data.strip();
         var by = RSA.decryptByBase64(data, key);
-        var decryptSt = new String(by);
 
-        return decryptSt;
+      return new String(by);
 
     }
 }

@@ -1,15 +1,14 @@
 package top.werls.tools.common.utils;
 
+import jakarta.servlet.http.HttpServletRequest;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 
-import javax.servlet.http.HttpServletRequest;
-import java.util.Arrays;
 
 /**
  * @author Jiawei Lee
- * @version TODO
- * @date created 2022/7/12
+ * @version 1
+ * date created 2022/7/12
  * @since on
  */
 @Slf4j

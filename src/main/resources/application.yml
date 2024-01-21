@@ -4,7 +4,9 @@ spring:
   messages:
     basename: i18n
     encoding: UTF-8
-
+  threads:
+    virtual:
+      enabled: true
 logging:
   config: classpath:logback-spring-dev.xml
   file:
@@ -14,7 +16,7 @@ logging:
     file: UTF-8
 env:
   appName: 'tools web'
-  version: '0.0.1'
+  version: '0.0.3'
   isEnableSwagger: false
   isPublic: true
   jwt:
