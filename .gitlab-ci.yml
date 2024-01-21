@@ -31,8 +31,8 @@ test-job:
   - echo "Compile complete."
 build-job:
   stage: build
-  only:
-  - tags
+#  only:
+#  - tags
   tags:
   - arm64
   image: gradle:8.5-jdk21
