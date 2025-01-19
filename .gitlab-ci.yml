@@ -112,6 +112,9 @@ deploy-job2:
     - ssh $DEPLOY_HOST_NAME@$DEPLOY_HOST "chmod +x /tools/bash.sh"
     - ssh -T $DEPLOY_HOST_NAME@$DEPLOY_HOST "export IMAGE_TAG=$IMAGE_TAG  && bash /tools/bash.sh"
     - echo "Application successfully deployed."
+    - ssh $DEPLOY_HOST_NAME@$DEPLOY_HOST "rm -rf /tools/build "
+
+
 #sast:
 #  stage: test
 #include:
