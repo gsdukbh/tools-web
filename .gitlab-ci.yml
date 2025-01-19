@@ -87,7 +87,7 @@ test-job-2:
     IMAGE_TAG: "$DOCKER_NAME/$CI_PROJECT_NAME:1"
   script:
     - echo "$IMAGE_TAG"
-    - sed -i "s/IMAGE_TAG/$IMAGE_TAG/g" ./deploy/docker-compose.yml
+    - sed -i "s/IMAGE_TAG/"$IMAGE_TAG"/g" ./deploy/docker-compose.yml
     - cat ./deploy/docker-compose.yml
 
 deploy-job2:
