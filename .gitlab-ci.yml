@@ -12,14 +12,14 @@ stages:
   - deploy
   - deploy-image
   - cleanup
-#test-job:
-#  stage: test
-#  tags:
-#    - arm64
-#  image: gradle:jdk21-graal
-#  script:
-#    - gradle build
-#    - echo "Compile complete."
+test-job:
+  stage: test
+  tags:
+    - arm64
+  image: gradle:jdk21-graal
+  script:
+    - gradle build
+    - echo "Compile complete."
 build-job:
   stage: build
   only:
@@ -76,19 +76,10 @@ build-job:
 #    - chmod 644 ~/.ssh/known_hosts
 #    - apt-get install rsync -y
 #  script:
-#    - sed -i "s/IMAGE_TAG/$IMAGE_TAG/g" ./deploy/docker-compose.yml
+#    - sed -i "s|IMAGE_TAG|$IMAGE_TAG|g" ./deploy/docker-compose.yml
 #    - rsync -avz -e ssh --include docker-compose.yml ./deploy $DEPLOY_HOST_NAME@$DEPLOY_HOST:/tools
 #    - ssh -T $DEPLOY_HOST_NAME@$DEPLOY_HOST < ./deploy/bash.sh
 #    - echo "Application successfully deployed."
-
-test-job-2:
-  stage: test
-  variables:
-    IMAGE_TAG: "$DOCKER_NAME/$CI_PROJECT_NAME:1"
-  script:
-    - echo "$IMAGE_TAG"
-    - sed -i "s|IMAGE_TAG|$IMAGE_TAG|g" ./deploy/docker-compose.yml
-    - cat ./deploy/docker-compose.yml
 
 deploy-job2:
   stage: deploy
@@ -111,7 +102,7 @@ deploy-job2:
     - apt-get install rsync -y
   script:
     - echo "$IMAGE_TAG"
-    - sed -i "s/IMAGE_TAG/$IMAGE_TAG/g" ./deploy/docker-compose.yml
+    - sed -i "s|IMAGE_TAG|$IMAGE_TAG|g" ./deploy/docker-compose.yml
     - cat ./deploy/docker-compose.yml
     # upload jar
     - rsync -avz -e ssh --include build/libs ./deploy $DEPLOY_HOST_NAME@$DEPLOY_HOST:/tools/build/libs
