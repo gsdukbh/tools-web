@@ -21,7 +21,9 @@ public class SimpleCache<K, V> extends AbstractCache<K, V> {
     }
 
     /**
+     *
      * 一个简单的缓冲 ConcurrentHashMap 实现
+     * 线程安全
      * @param capacity 缓冲容量 默认 0 无限大小
      * @param timeout 过期时间
      */

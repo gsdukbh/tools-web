@@ -64,7 +64,25 @@ public abstract class AbstractCache<K, V> implements Cache<K, V> {
         }
         cacheMap.put(key, cc);
     }
-
+    /**
+     * Replaces the existing value associated with the given key in the cache, and sets a timeout for
+     * it.
+     *
+     * @param key     The key associated with the value to be replaced.
+     * @param object  The new value to be stored in the cache.
+     * @param timeout The timeout duration in milliseconds after which the cache entry will be
+     *                invalidated.
+     */
+    public void replace(K key, V object, long timeout) {
+        CacheObject<K, V> cc = new CacheObject<>(key, object, timeout);
+        if (timeout != 0) {
+            existCustomTimeout = true;
+        }
+        if (isFull()) {
+            clear();
+        }
+        cacheMap.replace(key, cc);
+    }
     /**
      * 是否包含key
      *

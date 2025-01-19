@@ -5,6 +5,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
+import top.werls.tools.common.annotation.RequestLimit;
 import top.werls.tools.common.utils.captcha.CodeGenerator;
 import top.werls.tools.common.utils.captcha.RandomGeneratorCode;
 import top.werls.tools.common.utils.crypto.asymmetric.RSA;
@@ -30,6 +31,7 @@ public class RsaController {
 
     @GetMapping("/getkeys")
     @ResponseBody
+    @RequestLimit()
     public Map<String, String> getKeys(Integer length) throws Exception {
         if (length == null) {
             return null;
@@ -50,6 +52,7 @@ public class RsaController {
 
     @PostMapping("/encrypt")
     @ResponseBody
+    @RequestLimit()
     public String encrypt(String privateKey, String data) throws Exception {
         if (data == null || data.isEmpty() || privateKey == null || privateKey.isEmpty()) {
             return "";
@@ -66,6 +69,7 @@ public class RsaController {
 
     @PostMapping("/decrypt")
     @ResponseBody
+    @RequestLimit()
     public String decrypt(String publicKey, String data) throws Exception {
         if (data == null || data.isEmpty() || publicKey == null || publicKey.isEmpty()) {
             return "";
