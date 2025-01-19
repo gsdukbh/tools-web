@@ -110,7 +110,7 @@ deploy-job2:
     # upload jar
     - rsync -avzP -e ssh  ./build/libs/ $DEPLOY_HOST_NAME@$DEPLOY_HOST:/tools/build/libs --rsync-path="mkdir -p /tools/build/libs && rsync"
     - ssh $DEPLOY_HOST_NAME@$DEPLOY_HOST "chmod +x /tools/bash.sh"
-    - ssh -T $DEPLOY_HOST_NAME@$DEPLOY_HOST "bash /tools/bash.sh"
+    - ssh -T $DEPLOY_HOST_NAME@$DEPLOY_HOST "export IMAGE_TAG=$IMAGE_TAG  && bash /tools/bash.sh"
     - echo "Application successfully deployed."
 #sast:
 #  stage: test
