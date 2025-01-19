@@ -1,5 +1,5 @@
 # bin/bash
-cd /tools/deploy
+cd /tools
 docker-compose down
 docker rmi gsdukbh/tools-web
 docker build -t $IMAGE_TAG -f Dockerfile ./
