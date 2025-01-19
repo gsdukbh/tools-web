@@ -8,8 +8,9 @@
 stages:
   - test
   - build
-  #  - build_image
+  - build_image
   - deploy
+  - deploy-image
   - cleanup
 test-job:
   stage: test
@@ -33,52 +34,52 @@ build-job:
     expire_in: 1 days
     paths:
       - build/libs
-build_image-job:
-  stage: build_image
-  image: docker:latest
-  services:
-    - docker:dind
-  only:
-    - tags
-  needs:
-    - job: build-job
-      artifacts: true
-  tags:
-    - arm64
-  variables:
-    IMAGE_TAG: "$DOCKER_NAME/$CI_PROJECT_NAME:$CI_COMMIT_TAG"
-    LATEST: "$DOCKER_NAME/$CI_PROJECT_NAME:latest"
-  script:
-    - docker login -u $DOCKER_NAME -p $DOCKER_PASSWORD
-    - docker buildx ls
-    - docker run --privileged --rm tonistiigi/binfmt --install all
-    - docker buildx create --use --name mybuilder
-    - docker buildx  build --platform  linux/amd64,linux/arm64 --push -t $IMAGE_TAG -f Dockerfile ./
+#build_image-job:
+#  stage: build_image
+#  image: docker:latest
+#  services:
+#    - docker:dind
+#  only:
+#    - tags
+#  needs:
+#    - job: build-job
+#      artifacts: true
+#  tags:
+#    - arm64
+#  variables:
+#    IMAGE_TAG: "$DOCKER_NAME/$CI_PROJECT_NAME:$CI_COMMIT_TAG"
+#    LATEST: "$DOCKER_NAME/$CI_PROJECT_NAME:latest"
+#  script:
+#    - docker login -u $DOCKER_NAME -p $DOCKER_PASSWORD
+#    - docker buildx ls
+#    - docker run --privileged --rm tonistiigi/binfmt --install all
+#    - docker buildx create --use --name mybuilder
+#    - docker buildx  build --platform  linux/amd64,linux/arm64 --push -t $IMAGE_TAG -f Dockerfile ./
 
 
-deploy-job: # This job runs in the deploy stage.
-  stage: deploy-image  # It only runs when *both* jobs in the test stage complete successfully.
-  only:
-    - tags
-  needs:
-    - job: build_image-job
-  variables:
-    IMAGE_TAG: $DOCKER_NAME\/$CI_PROJECT_NAME:$CI_COMMIT_TAG
-  before_script:
-    - command -v ssh-agent >/dev/null || ( apt-get update -y && apt-get install openssh-client
-      -y )
-    - eval $(ssh-agent -s)
-    - echo "$SSH_PRIVATE_KEY" | tr -d '\r' | ssh-add -
-    - mkdir -p ~/.ssh
-    - chmod 700 ~/.ssh
-    - echo "$SSH_KNOWN_HOSTS" >> ~/.ssh/known_hosts
-    - chmod 644 ~/.ssh/known_hosts
-    - apt-get install rsync -y
-  script:
-    - sed -i "s/IMAGE_TAG/"$IMAGE_TAG"/g" ./deploy/docker-compose.yml
-    - rsync -avz -e ssh --include docker-compose.yml ./deploy $DEPLOY_HOST_NAME@$DEPLOY_HOST:/tools
-    - ssh -T $DEPLOY_HOST_NAME@$DEPLOY_HOST < ./deploy/bash.sh
-    - echo "Application successfully deployed."
+#deploy-job: # This job runs in the deploy stage.
+#  stage: deploy-image  # It only runs when *both* jobs in the test stage complete successfully.
+#  only:
+#    - tags
+#  needs:
+#    - job: build_image-job
+#  variables:
+#    IMAGE_TAG: $DOCKER_NAME\/$CI_PROJECT_NAME:$CI_COMMIT_TAG
+#  before_script:
+#    - command -v ssh-agent >/dev/null || ( apt-get update -y && apt-get install openssh-client
+#      -y )
+#    - eval $(ssh-agent -s)
+#    - echo "$SSH_PRIVATE_KEY" | tr -d '\r' | ssh-add -
+#    - mkdir -p ~/.ssh
+#    - chmod 700 ~/.ssh
+#    - echo "$SSH_KNOWN_HOSTS" >> ~/.ssh/known_hosts
+#    - chmod 644 ~/.ssh/known_hosts
+#    - apt-get install rsync -y
+#  script:
+#    - sed -i "s/IMAGE_TAG/"$IMAGE_TAG"/g" ./deploy/docker-compose.yml
+#    - rsync -avz -e ssh --include docker-compose.yml ./deploy $DEPLOY_HOST_NAME@$DEPLOY_HOST:/tools
+#    - ssh -T $DEPLOY_HOST_NAME@$DEPLOY_HOST < ./deploy/bash.sh
+#    - echo "Application successfully deployed."
 deploy-job2:
   stage: deploy
   only:
