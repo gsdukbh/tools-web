@@ -1,12 +1,12 @@
 plugins {
-    id 'org.springframework.boot' version '3.4.0'
+    id 'org.springframework.boot' version '3.4.1'
     id 'io.spring.dependency-management' version '1.1.7'
     id 'org.graalvm.buildtools.native' version '0.10.4'
     id 'java'
 }
 
 group = 'top.werls'
-version = '0.0.3-releases'
+version = '0.0.6-releases'
 java {
     toolchain {
         languageVersion = JavaLanguageVersion.of(21)
@@ -25,7 +25,7 @@ repositories {
 
 ext{
     // version 配置
-    gsonVersion= '2.8.9'
+    gsonVersion= '2.11.0'
     lang3Version = '3.12.0'
     springdocVersion = '1.6.5'
     jwtVersion = '0.11.2'
@@ -35,14 +35,14 @@ ext{
 dependencies {
 
 
-    implementation 'com.google.code.gson:gson:2.10'
+    implementation "com.google.code.gson:gson:${gsonVersion}"
     implementation 'org.apache.commons:commons-lang3:3.12.0'
+    implementation 'org.springframework.boot:spring-boot-starter-thymeleaf'
 
     // spring doc
     implementation 'org.springdoc:springdoc-openapi-starter-webmvc-ui:2.3.0'
     // jwt
     implementation 'io.jsonwebtoken:jjwt-api:0.11.5'
-    implementation 'org.springframework.boot:spring-boot-starter-thymeleaf'
     runtimeOnly 'io.jsonwebtoken:jjwt-impl:0.11.5'
             // Uncomment the next line if you want to use RSASSA-PSS (PS256, PS384, PS512) algorithms:
             'org.bouncycastle:bcprov-jdk15on:1.70'
