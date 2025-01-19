@@ -25,7 +25,7 @@ test-job:
   stage: test
   tags:
   - arm64
-  image: gradle:8.5-jdk21
+  image: gradle:8.5-jdk21-graal
   script:
   - gradle build
   - echo "Compile complete."
@@ -35,7 +35,7 @@ build-job:
   - tags
   tags:
   - arm64
-  image: gradle:8.5-jdk21
+  image: gradle:8.5-jdk21-graal
   script:
   - gradle bootJar
   - echo "Compile complete."
