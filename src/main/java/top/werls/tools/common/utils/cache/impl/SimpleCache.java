@@ -5,7 +5,7 @@ import java.util.concurrent.ConcurrentHashMap;
 
 /**
  * @author leejiawei
- * @version TODO
+ * @version 1
  * @since on  2021/10/7
  */
 public class SimpleCache<K, V> extends AbstractCache<K, V> {
