@@ -8,59 +8,47 @@
 stages:
   - test
   - build
-  - build_image
+  #  - build_image
   - deploy
-  - review
-  - dast
-  - staging
-  - canary
-  - production
-  - incremental rollout 10%
-  - incremental rollout 25%
-  - incremental rollout 50%
-  - incremental rollout 100%
-  - performance
   - cleanup
 test-job:
   stage: test
   tags:
-  - arm64
+    - arm64
   image: gradle:jdk21-graal
   script:
-  - gradle build
-  - echo "Compile complete."
+    - gradle build
+    - echo "Compile complete."
 build-job:
   stage: build
   only:
-  - tags
+    - tags
   tags:
-  - arm64
+    - arm64
   image: gradle:jdk21-graal
   script:
-  - gradle bootJar
-  - echo "Compile complete."
+    - gradle bootJar
+    - echo "Compile complete."
   artifacts:
     expire_in: 1 days
     paths:
-    - build
+      - build/libs
 build_image-job:
   stage: build_image
   image: docker:latest
   services:
-  - docker:dind
+    - docker:dind
   only:
-  - tags
+    - tags
   needs:
-  - job: build-job
-    artifacts: true
+    - job: build-job
+      artifacts: true
   tags:
-  - arm64
+    - arm64
   variables:
     IMAGE_TAG: "$DOCKER_NAME/$CI_PROJECT_NAME:$CI_COMMIT_TAG"
     LATEST: "$DOCKER_NAME/$CI_PROJECT_NAME:latest"
   script:
-    - echo $DOCKER_NAME
-    - echo $DOCKER_PASSWORD
     - docker login -u $DOCKER_NAME -p $DOCKER_PASSWORD
     - docker buildx ls
     - docker run --privileged --rm tonistiigi/binfmt --install all
@@ -69,11 +57,11 @@ build_image-job:
 
 
 deploy-job: # This job runs in the deploy stage.
-  stage: deploy  # It only runs when *both* jobs in the test stage complete successfully.
+  stage: deploy-image  # It only runs when *both* jobs in the test stage complete successfully.
   only:
-  - tags
+    - tags
   needs:
-  - job: build_image-job
+    - job: build_image-job
   variables:
     IMAGE_TAG: $DOCKER_NAME\/$CI_PROJECT_NAME:$CI_COMMIT_TAG
   before_script:
@@ -88,6 +76,34 @@ deploy-job: # This job runs in the deploy stage.
     - apt-get install rsync -y
   script:
     - sed -i "s/IMAGE_TAG/"$IMAGE_TAG"/g" ./deploy/docker-compose.yml
+    - rsync -avz -e ssh --include docker-compose.yml ./deploy $DEPLOY_HOST_NAME@$DEPLOY_HOST:/tools
+    - ssh -T $DEPLOY_HOST_NAME@$DEPLOY_HOST < ./deploy/bash.sh
+    - echo "Application successfully deployed."
+deploy-job2:
+  stage: deploy
+  only:
+    - tags
+  needs:
+    - job: build-job
+      artifacts: true
+  variables:
+    IMAGE_TAG: "$DOCKER_NAME/$CI_PROJECT_NAME:$CI_COMMIT_TAG"
+  before_script:
+    - command -v ssh-agent >/dev/null || ( apt-get update -y && apt-get install openssh-client
+      -y )
+    - eval $(ssh-agent -s)
+    - echo "$SSH_PRIVATE_KEY" | tr -d '\r' | ssh-add -
+    - mkdir -p ~/.ssh
+    - chmod 700 ~/.ssh
+    - echo "$SSH_KNOWN_HOSTS" >> ~/.ssh/known_hosts
+    - chmod 644 ~/.ssh/known_hosts
+    - apt-get install rsync -y
+  script:
+    - sed -i "s/IMAGE_TAG/"$IMAGE_TAG"/g" ./deploy/docker-compose.yml
+    # upload jar
+    - rsync -avz -e ssh --include build/libs ./deploy $DEPLOY_HOST_NAME@$DEPLOY_HOST:/tools/build/libs
+    # upload Dockerfile
+    - rsync -avz -e ssh --include Dockerfile ./deploy $DEPLOY_HOST_NAME@$DEPLOY_HOST:/tools
     - rsync -avz -e ssh --include docker-compose.yml ./deploy $DEPLOY_HOST_NAME@$DEPLOY_HOST:/tools
     - ssh -T $DEPLOY_HOST_NAME@$DEPLOY_HOST < ./deploy/bash.sh
     - echo "Application successfully deployed."
