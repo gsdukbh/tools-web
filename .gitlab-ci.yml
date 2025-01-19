@@ -104,9 +104,8 @@ deploy-job2:
     - echo "$IMAGE_TAG"
     - ls -a ./build/libs
     - sed -i "s|IMAGE_TAG|$IMAGE_TAG|g" ./deploy/docker-compose.yml
-    - cat ./deploy/docker-compose.yml
     # upload Dockerfile
-    - rsync -avzP -e ssh --include="Dockerfile" -exclude "*" . $DEPLOY_HOST_NAME@$DEPLOY_HOST:/tools
+    - rsync -avzP -e ssh --include="Dockerfile" --exclude "*" . $DEPLOY_HOST_NAME@$DEPLOY_HOST:/tools
     - rsync -avzP -e ssh ./deploy/ $DEPLOY_HOST_NAME@$DEPLOY_HOST:/tools
     # upload jar
     - rsync -avzP -e ssh  ./build/libs/ $DEPLOY_HOST_NAME@$DEPLOY_HOST:/tools/build/libs --rsync-path="mkdir -p /tools/build/libs && rsync"
