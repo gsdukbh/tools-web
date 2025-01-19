@@ -102,13 +102,14 @@ deploy-job2:
     - apt-get install rsync -y
   script:
     - echo "$IMAGE_TAG"
+    - ls -a ./build/libs
     - sed -i "s|IMAGE_TAG|$IMAGE_TAG|g" ./deploy/docker-compose.yml
     - cat ./deploy/docker-compose.yml
     # upload Dockerfile
     - rsync -avz -e ssh --include Dockerfile ./deploy $DEPLOY_HOST_NAME@$DEPLOY_HOST:/tools
     - rsync -avz -e ssh --include docker-compose.yml ./deploy $DEPLOY_HOST_NAME@$DEPLOY_HOST:/tools
     # upload jar
-    - rsync -avz -e ssh --include build/libs ./deploy $DEPLOY_HOST_NAME@$DEPLOY_HOST:/tools/build/libs --rsync-path="mkdir -p /tools/build/libs && rsync"
+    - rsync -avz -e ssh --include ./build/libs . $DEPLOY_HOST_NAME@$DEPLOY_HOST:/tools/build/libs --rsync-path="mkdir -p /tools/build/libs && rsync"
     - ssh -T $DEPLOY_HOST_NAME@$DEPLOY_HOST < ./deploy/bash.sh
     - echo "Application successfully deployed."
 #sast:
