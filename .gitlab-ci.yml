@@ -92,15 +92,23 @@ deploy-job2:
   variables:
     IMAGE_TAG: "$DOCKER_NAME/$CI_PROJECT_NAME:$CI_COMMIT_TAG"
   before_script:
-    - command -v ssh-agent >/dev/null || ( apt-get update -y && apt-get install openssh-client
-      -y )
+    # 检查 ssh-agent 是否存在，如果不存在则使用 apk 安装 openssh 和 rsync
+    - |
+      if ! command -v ssh-agent >/dev/null; then
+        if command -v apk >/dev/null; then
+          apk update && apk add openssh rsync
+        else
+          echo "Unsupported package manager"
+          exit 1
+        fi
+      fi
     - eval $(ssh-agent -s)
     - echo "$SSH_PRIVATE_KEY" | tr -d '\r' | ssh-add -
     - mkdir -p ~/.ssh
     - chmod 700 ~/.ssh
     - echo "$SSH_KNOWN_HOSTS" >> ~/.ssh/known_hosts
     - chmod 644 ~/.ssh/known_hosts
-    - apt-get install rsync -y
+
   script:
     - echo "$IMAGE_TAG"
     - ls -a ./build/libs
@@ -111,9 +119,10 @@ deploy-job2:
     # upload jar
     - rsync -avzP -e ssh  ./build/libs/ $DEPLOY_HOST_NAME@$DEPLOY_HOST:/tools/build/libs --rsync-path="mkdir -p /tools/build/libs && rsync"
     - ssh $DEPLOY_HOST_NAME@$DEPLOY_HOST "chmod +x /tools/bash.sh"
-    - ssh -T $DEPLOY_HOST_NAME@$DEPLOY_HOST "export IMAGE_TAG=$IMAGE_TAG  && bash /tools/bash.sh"
+    - ssh -T $DEPLOY_HOST_NAME@$DEPLOY_HOST "export IMAGE_TAG=$IMAGE_TAG && bash /tools/bash.sh"
     - echo "Application successfully deployed."
-    - ssh $DEPLOY_HOST_NAME@$DEPLOY_HOST "rm -rf /tools/build "
+    - ssh $DEPLOY_HOST_NAME@$DEPLOY_HOST "rm -rf /tools/build"
+
 
 
 #sast:
