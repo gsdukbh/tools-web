@@ -85,6 +85,7 @@ deploy-job2:
   stage: deploy
   only:
     - tags
+  image: alpine:latest
   needs:
     - job: build-job
       artifacts: true
