@@ -4,6 +4,7 @@ import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
+import top.werls.tools.common.annotation.RequestRateLimit;
 import top.werls.tools.common.utils.IPUtils;
 
 
@@ -22,11 +23,13 @@ public class DefaultController {
         return "rsa";
     }
     @RequestMapping("/public/rsa")
+    @RequestRateLimit
     public  String rsa(){
         return  "rsa";
     }
     @RequestMapping("/public/ip")
     @ResponseBody
+    @RequestRateLimit()
     public String getIp(HttpServletRequest request){
         return IPUtils.getIpAddress(request);
     }

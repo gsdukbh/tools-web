@@ -16,7 +16,7 @@ logging:
     file: UTF-8
 env:
   appName: 'tools web'
-  version: '0.0.3'
+  version: '0.0.5'
   isEnableSwagger: false
   isPublic: true
   jwt:

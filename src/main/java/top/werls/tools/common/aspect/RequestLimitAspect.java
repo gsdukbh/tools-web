@@ -19,8 +19,8 @@ import top.werls.tools.common.utils.cache.impl.SimpleCache;
  * @date 2022/11/27
  * @since on
  */
-@Aspect
-@Component
+//@Aspect
+//@Component
 @Slf4j
 public class RequestLimitAspect {
 

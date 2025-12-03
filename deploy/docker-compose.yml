@@ -2,5 +2,6 @@ services:
   tools:
     image: IMAGE_TAG
     container_name: tools
+    restart: always
     ports:
       - '9080:8080'
