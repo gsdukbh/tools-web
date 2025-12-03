@@ -7,7 +7,7 @@ plugins {
 }
 
 group = 'top.werls'
-version = '0.0.5-releases'
+version = '0.0.6-releases'
 java {
     toolchain {
         languageVersion = JavaLanguageVersion.of(21)
