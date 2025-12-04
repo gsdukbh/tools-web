@@ -22,8 +22,10 @@ test-job:
     - echo "Compile complete."
 build-job:
   stage: build
-  only:
-    - tags
+  rules:
+    - if: '$CI_COMMIT_TAG =~ /.*-releases$/'
+      when: on_success
+    - when: never
   tags:
     - arm64
   image: gradle:jdk21-graal
@@ -39,8 +41,10 @@ build-job:
 #  image: docker:latest
 #  services:
 #    - docker:dind
-#  only:
-#    - tags
+#  rules:
+#    - if: '$CI_COMMIT_TAG =~ /.*-releases$/'
+#      when: on_success
+#    - when: never
 #  needs:
 #    - job: build-job
 #      artifacts: true
@@ -83,9 +87,11 @@ build-job:
 
 deploy-job2:
   stage: deploy
-  only:
-    - tags
   image: alpine:latest
+  rules:
+    - if: '$CI_COMMIT_TAG =~ /.*-releases$/'
+      when: on_success
+    - when: never
   needs:
     - job: build-job
       artifacts: true
@@ -124,8 +130,3 @@ deploy-job2:
     - ssh $DEPLOY_HOST_NAME@$DEPLOY_HOST "rm -rf /tools/build"
 
 
-
-#sast:
-#  stage: test
-#include:
-#- template: Auto-DevOps.gitlab-ci.yml
