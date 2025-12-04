@@ -8,6 +8,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 import top.werls.tools.common.ResultData;
 import top.werls.tools.common.annotation.RequestLimit;
+import top.werls.tools.common.annotation.RequestRateLimit;
 import top.werls.tools.system.param.LoginParam;
 import top.werls.tools.system.service.SysUserService;
 import top.werls.tools.system.vo.LoginVo;
@@ -24,7 +25,7 @@ public class LoginController {
     private SysUserService userService;
 
     @PostMapping("/login")
-    @RequestLimit(frequency = 5, minute = 1)
+    @RequestRateLimit(frequency = 5)
     public ResultData<LoginVo> login(@RequestBody LoginParam param) {
         return ResultData.success(userService.login(param));
     }

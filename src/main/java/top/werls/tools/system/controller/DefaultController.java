@@ -29,7 +29,7 @@ public class DefaultController {
     }
     @RequestMapping("/public/ip")
     @ResponseBody
-    @RequestRateLimit()
+    @RequestRateLimit(frequency = 30)
     public String getIp(HttpServletRequest request){
         return IPUtils.getIpAddress(request);
     }
