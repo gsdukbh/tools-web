@@ -3,7 +3,7 @@ cd /tools
 if docker compose ps | grep -q 'Up'; then
     echo "Tools is running, stop and restart"
     docker compose down
-    docker rmi gsdukbh/tools-web
+    docker image prune -a -f
     docker buildx build -t $IMAGE_TAG -f Dockerfile ./
     docker compose up -d
 else
