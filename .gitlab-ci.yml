@@ -17,6 +17,11 @@ test-job:
   tags:
     - arm64
   image: gradle:jdk21-graal
+  cache:
+    key: gradle
+    paths:
+      - .gradle/caches/
+      - .gradle/wrapper/
   script:
     - gradle build
     - echo "Compile complete."
@@ -29,6 +34,11 @@ build-job:
   tags:
     - arm64
   image: gradle:jdk21-graal
+  cache:
+    key: gradle
+    paths:
+      - .gradle/caches/
+      - .gradle/wrapper/
   script:
     - gradle bootJar
     - echo "Compile complete."
@@ -36,6 +46,7 @@ build-job:
     expire_in: 1 days
     paths:
       - build/libs
+      
 #build_image-job:
 #  stage: build_image
 #  image: docker:latest
